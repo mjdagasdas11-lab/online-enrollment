@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Enrollment System | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e9eef5 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .logo h2 {
+            background: linear-gradient(135deg, #1e3c72, #2b4c7c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        .logo p {
+            font-size: 0.8rem;
+            color: #5a6e8a;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .user-name {
+            font-weight: 500;
+            color: #2c3e66;
+        }
+        .logout-btn {
+            background: #f0f2f5;
+            color: #dc3545;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            width: auto;
+        }
+        .logout-btn:hover {
+            background: #ffe5e5;
+            transform: none;
+        }
+
+        /* Login/Register Card */
+        .auth-container {
+            max-width: 500px;
+            margin: 50px auto;
+        }
+        .auth-card {
+            background: white;
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #eef2ff;
+        }
+        .auth-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: #8a99b4;
+            transition: 0.3s;
+        }
+        .auth-tab.active {
+            color: #2b6ef0;
+            border-bottom: 3px solid #2b6ef0;
+        }
+        .auth-form {
+            display: none;
+        }
+        .auth-form.active-form {
+            display: block;
+        }
+        .card {
+            background: white;
+            border-radius: 32px;
+            padding: 1.8rem;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 1.8rem;
+        }
+        .full-width {
+            grid-column: span 2;
+        }
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #1e2f4e;
+            margin-bottom: 1.2rem;
+            border-left: 5px solid #2b6ef0;
+            padding-left: 1rem;
+        }
+        h3 {
+            font-weight: 600;
+            color: #2c3e66;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            font-weight: 500;
+            color: #2c3e66;
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cddfe7;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2b6ef0;
+            box-shadow: 0 0 0 3px rgba(43,110,240,0.1);
+        }
+        button {
+            background: #2b6ef0;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+        button:hover {
+            background: #1a5ad4;
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #2b6ef0;
+            color: #2b6ef0;
+            width: auto;
+        }
+        .btn-outline:hover {
+            background: #eef4ff;
+            transform: translateY(-2px);
+        }
+        .status-badge {
+            background: #eef2ff;
+            color: #1e5bbf;
+            border-radius: 50px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-approved {
+            background: #d1fae5;
+            color: #0f5b3a;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 1px solid #e2edf2;
+        }
+        th {
+            color: #2c3e66;
+            font-weight: 600;
+            background: #f8fafd;
+        }
+        .alert {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .dashboard-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafd 0%, #ffffff 100%);
+            border-radius: 24px;
+            padding: 1.5rem;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+            border: 1px solid #eef2ff;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e2f4e;
+        }
+        .stat-card .stat-label {
+            color: #6c7a91;
+            font-size: 0.85rem;
+        }
+        .notification-area {
+            background: #eef2ff;
+            border-radius: 24px;
+            padding: 1rem;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            width: auto;
+        }
+        .approve-btn { background: #28a745; }
+        .approve-btn:hover { background: #218838; }
+        .reject-btn { background: #dc3545; }
+        .reject-btn:hover { background: #c82333; }
+        .pending-btn { background: #ffc107; color: #2c3e66; }
+        .pending-btn:hover { background: #e0a800; }
+        
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #f0f2f5;
+            color: #2c3e66;
+            width: auto;
+            padding: 8px 20px;
+        }
+        .filter-btn.active-filter {
+            background: #2b6ef0;
+            color: white;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+        .search-box input {
+            border-radius: 40px;
+        }
+        @media (max-width: 800px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .navbar { flex-direction: column; gap: 0.8rem; }
+        }
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            color: #5b6e8c;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="navbar">
+        <div class="logo">
+            <h2><i class="fas fa-graduation-cap"></i> Online Enrollment</h2>
+            <p>Digital Enrollment • Secure Login Required</p>
+        </div>
+        <div class="user-info" id="userInfoBar" style="display:none;">
+            <span class="user-name" id="currentUserName"><i class="fas fa-user-circle"></i> </span>
+            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <!-- LOGIN / REGISTER SECTION -->
+    <div id="authSection">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-tab="login">Login</div>
+                    <div class="auth-tab" data-tab="register">Register Account</div>
+                </div>
+                
+                <div id="loginForm" class="auth-form active-form">
+                    <form id="loginFormElement">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="loginEmail" placeholder="student@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit"><i class="fas fa-key"></i> Login to Enroll</button>
+                        <p style="text-align:center; margin-top:1rem; font-size:0.85rem; color:#6c7a91;">
+                        </p>
+                    </form>
+                    <div id="loginMessage" style="margin-top:1rem;"></div>
+                </div>
+                
+                <div id="registerForm" class="auth-form">
+                    <form id="registerFormElement">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="regFullname" placeholder="Juan Dela Cruz" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="regEmail" placeholder="student@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="regPassword" placeholder="Minimum 6 characters" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" id="regConfirmPassword" placeholder="Confirm password" required>
+                        </div>
+                        <button type="submit"><i class="fas fa-user-plus"></i> Create Account</button>
+                    </form>
+                    <div id="registerMessage" style="margin-top:1rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STUDENT ENROLLMENT SECTION -->
+    <div id="studentSection" style="display:none;">
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3><i class="fas fa-edit"></i> Online Enrollment Form</h3>
+                <form id="enrollmentForm">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="fullname" readonly style="background:#f5f7fa;">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address *</label>
+                        <input type="email" id="email" readonly style="background:#f5f7fa;">
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="date" id="dob">
+                    </div>
+                    <div class="form-group">
+                        <label>Department *</label>
+                        <select id="program" required>
+                            <option value="">-- Department --</option>
+                            <option>College of Criminal Justice Education</option>
+                            <option>Department of Business Management</option>
+                            <option>Department of Computer Studies</option>
+                            <option>Department of General Teaching Training</option>
+                            <option>Department of Industrial Technology</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Program / Course *</label>
+                        <select id="program" required>
+                            <option value="">-- Select Program --</option>
+                            <option>Computer Science</option>
+                            <option>Information Technology</option>
+                            <option>Computer Engineering</option>
+                            <option>Business Administration</option>
+                            <option>BindTech</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Year Level</label>
+                        <select id="yearlevel">
+                            <option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" id="contact" placeholder="09123456789">
+                    </div>
+                    <button type="submit"><i class="fas fa-paper-plane"></i> Submit Enrollment</button>
+                </form>
+                <div id="studentMessage" class="notification-area" style="margin-top:1rem; display:none;"></div>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-bell"></i> Real-time Updates & Notifications</h3>
+                <div id="studentNotifications">
+                    <p style="color:#6c7a91;"><i class="fas fa-spinner fa-pulse"></i> Loading application progress...</p>
+                </div>
+                <hr style="margin:1rem 0;">
+                <h4><i class="fas fa-info-circle"></i> Enrollment Guide</h4>
+                <ul style="margin-left:1.2rem; color:#4a5b7a;">
+                    <li>✔ No need to visit school physically</li>
+                    <li>✔ Admin will verify documents & eligibility</li>
+                    <li>✔ Receive real-time status updates</li>
+                    <li>✔ Centralized and secure record storage</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD  -->
+    <div id="adminSection" style="display:none;">
+        <div class="card full-width">
+            <h2><i class="fas fa-chalkboard-user"></i> Administrator Dashboard</h2>
+            <p style="margin-bottom:1.5rem; color:#6c7a91;">Manage Enrollments, Verify Documents & Generate Reports</p>
+            
+            <!-- Statistics Cards -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <i class="fas fa-users" style="color:#2b6ef0;"></i>
+                    <div class="stat-number" id="totalEnrolled">0</div>
+                    <div class="stat-label">Total Enrollees</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-hourglass-half" style="color:#ffc107;"></i>
+                    <div class="stat-number" id="pendingCount">0</div>
+                    <div class="stat-label">Pending Approval</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-circle" style="color:#28a745;"></i>
+                    <div class="stat-number" id="approvedCount">0</div>
+                    <div class="stat-label">Approved</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-times-circle" style="color:#dc3545;"></i>
+                    <div class="stat-number" id="rejectedCount">0</div>
+                    <div class="stat-label">Rejected</div>
+                </div>
+            </div>
+            
+            <!-- Filter and Search -->
+            <div class="filter-bar">
+                <button class="filter-btn active-filter" data-filter="all">All Applications</button>
+                <button class="filter-btn" data-filter="pending">Pending</button>
+                <button class="filter-btn" data-filter="approved">Approved</button>
+                <button class="filter-btn" data-filter="rejected">Rejected</button>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Search by name or email...">
+                </div>
+                <button id="refreshAdminBtn" class="btn-outline"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+            
+            <!-- Enrollments Table -->
+            <div style="overflow-x:auto;">
+                <table style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Program</th>
+                            <th>Year Level</th>
+                            <th>Email</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Submission Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody">
+                        <tr><td colspan="9" style="text-align:center;">Loading applications...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Report Generation -->
+            <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; justify-content:space-between; align-items:center;">
+                <div>
+                    <button id="generateReportBtn" class="btn-outline"><i class="fas fa-file-alt"></i> Generate Official Report (CSV)</button>
+                    <button id="bulkApproveBtn" class="btn-outline" style="border-color:#28a745; color:#28a745;"><i class="fas fa-check-double"></i> Bulk Approve Pending</button>
+                </div>
+                <div>
+                    <small style="color:#6c7a91;"><i class="fas fa-shield-alt"></i> Role-based Access Control | Secure Database</small>
+                </div>
+            </div>
+            <div id="adminMsg" style="margin-top:1rem;"></div>
+        </div>
+    </div>
+    <footer><i class="fas fa-database"></i> Secure Centralized Database | Role-based Access | Login Required</footer>
+</div>
+
+<script>
+    // ========== DATABASE ==========
+    let users = [];
+    let enrollments = [];
+    let currentUser = null;
+    let currentFilter = "all";
+    let searchTerm = "";
+
+    function initDatabase() {
+        const storedUsers = localStorage.getItem("enrollment_users");
+        if(storedUsers) {
+            users = JSON.parse(storedUsers);
+        } else {
+            users = [
+                { id: 1, fullname: "Administrator", email: "admin@gmail.com", password: "admin123", role: "admin" }
+            ];
+            saveUsers();
+        }
+        
+        const storedEnroll = localStorage.getItem("enrollment_system_db");
+        if(storedEnroll) {
+            enrollments = JSON.parse(storedEnroll);
+        } else {
+            enrollments = [
+                { id: 1001, fullname: "Stephanie Gyle Dagohoy", email: "maria@gmail.com", dob: "2005-06-12", program: "Information Technology", yearlevel: "2nd Year", contact: "09171234567", status: "approved", date: new Date().toISOString() },
+                { id: 1002, fullname: "Krezel Evacitas", email: "carlos@gmail.com", dob: "2004-11-23", program: "Computer Science", yearlevel: "1st Year", contact: "09987654321", status: "pending", date: new Date().toISOString() },
+                { id: 1003, fullname: "Mary Joy Dingding", email: "ana@student.edu", dob: "2005-02-15", program: "Business Administration", yearlevel: "3rd Year", contact: "09181234567", status: "pending", date: new Date().toISOString() }
+            ];
+            saveEnrollments();
+        }
+    }
+    
+    function saveUsers() { localStorage.setItem("enrollment_users", JSON.stringify(users)); }
+    function saveEnrollments() { localStorage.setItem("enrollment_system_db", JSON.stringify(enrollments)); }
+    
+    function registerUser(fullname, email, password) {
+        const existing = users.find(u => u.email === email);
+        if(existing) return { success: false, message: "Email already registered." };
+        users.push({ id: users.length + 1, fullname, email, password, role: "student" });
+        saveUsers();
+        return { success: true, message: "Account created! Please login." };
+    }
+    
+    function loginUser(email, password) {
+        const user = users.find(u => u.email === email && u.password === password);
+        if(!user) return { success: false, message: "Invalid email or password." };
+        currentUser = { email: user.email, role: user.role, fullname: user.fullname, id: user.id };
+        localStorage.setItem("current_session", JSON.stringify(currentUser));
+        return { success: true, role: user.role };
+    }
+    
+    function logout() {
+        currentUser = null;
+        localStorage.removeItem("current_session");
+        showAuthSection();
+    }
+    
+    function checkSession() {
+        const session = localStorage.getItem("current_session");
+        if(session) {
+            currentUser = JSON.parse(session);
+            if(currentUser.role === "student") showStudentPortal();
+            else if(currentUser.role === "admin") showAdminPortal();
+            return true;
+        }
+        return false;
+    }
+    
+    function showAuthSection() {
+        document.getElementById("authSection").style.display = "block";
+        document.getElementById("studentSection").style.display = "none";
+        document.getElementById("adminSection").style.display = "none";
+        document.getElementById("userInfoBar").style.display = "none";
+    }
+    
+    function showStudentPortal() {
+        document.getElementById("authSection").style.display = "none";
+        document.getElementById("studentSection").style.display = "block";
+        document.getElementById("adminSection").style.display = "none";
+        document.getElementById("userInfoBar").style.display = "flex";
+        document.getElementById("currentUserName").innerHTML = `<i class="fas fa-user-graduate"></i> ${currentUser.fullname} (Student)`;
+        
+        document.getElementById("fullname").value = currentUser.fullname;
+        document.getElementById("email").value = currentUser.email;
+        const existingEnroll = enrollments.find(e => e.email === currentUser.email);
+        if(existingEnroll) {
+            document.getElementById("dob").value = existingEnroll.dob || "";
+            document.getElementById("program").value = existingEnroll.program || "";
+            document.getElementById("yearlevel").value = existingEnroll.yearlevel || "";
+            document.getElementById("contact").value = existingEnroll.contact || "";
+        }
+        updateStudentNotifications(currentUser.email);
+    }
+    
+    function showAdminPortal() {
+        document.getElementById("authSection").style.display = "none";
+        document.getElementById("studentSection").style.display = "none";
+        document.getElementById("adminSection").style.display = "block";
+        document.getElementById("userInfoBar").style.display = "flex";
+        document.getElementById("currentUserName").innerHTML = `<i class="fas fa-shield-alt"></i> ${currentUser.fullname} (Admin)`;
+        renderAdminTable();
+    }
+    
+    function submitEnrollment(formData) {
+        const existingIndex = enrollments.findIndex(e => e.email === formData.email);
+        if(existingIndex !== -1) {
+            enrollments[existingIndex] = { ...enrollments[existingIndex], ...formData, date: new Date().toISOString() };
+            saveEnrollments();
+            return { success: true, message: "Enrollment updated successfully!" };
+        }
+        const newEnrollment = {
+            id: enrollments.length === 0 ? 1001 : Math.max(...enrollments.map(e => e.id)) + 1,
+            ...formData,
+            status: "pending",
+            date: new Date().toISOString()
+        };
+        enrollments.push(newEnrollment);
+        saveEnrollments();
+        return { success: true, message: "Enrollment submitted successfully!" };
+    }
+    
+    function updateStatus(id, newStatus) {
+        const index = enrollments.findIndex(e => e.id === id);
+        if(index !== -1) {
+            enrollments[index].status = newStatus;
+            enrollments[index].date = new Date().toISOString();
+            saveEnrollments();
+            return true;
+        }
+        return false;
+    }
+    
+    function bulkApprovePending() {
+        let count = 0;
+        enrollments.forEach(e => {
+            if(e.status === "pending") {
+                e.status = "approved";
+                e.date = new Date().toISOString();
+                count++;
+            }
+        });
+        if(count > 0) {
+            saveEnrollments();
+            renderAdminTable();
+            showAdminMsg(`✅ Approved ${count} pending enrollment(s)!`, false);
+        } else {
+            showAdminMsg("No pending enrollments to approve.", true);
+        }
+    }
+    
+    function getFilteredEnrollments() {
+        let filtered = [...enrollments];
+        if (currentFilter !== "all") {
+            filtered = filtered.filter(e => e.status === currentFilter);
+        }
+        if (searchTerm) {
+            filtered = filtered.filter(e => 
+                e.fullname.toLowerCase().includes(searchTerm) || 
+                e.email.toLowerCase().includes(searchTerm)
+            );
+        }
+        return filtered;
+    }
+    
+    function renderAdminTable() {
+        const filtered = getFilteredEnrollments();
+        const tbody = document.getElementById("adminTableBody");
+        
+        // Update stats
+        const total = enrollments.length;
+        const pending = enrollments.filter(e => e.status === "pending").length;
+        const approved = enrollments.filter(e => e.status === "approved").length;
+        const rejected = enrollments.filter(e => e.status === "rejected").length;
+        
+        document.getElementById("totalEnrolled").innerText = total;
+        document.getElementById("pendingCount").innerText = pending;
+        document.getElementById("approvedCount").innerText = approved;
+        document.getElementById("rejectedCount").innerText = rejected;
+        
+        if(filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;">No enrollment records found.</td></tr>`;
+            return;
+        }
+        
+        tbody.innerHTML = "";
+        filtered.forEach(rec => {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = rec.id;
+            row.insertCell(1).innerHTML = `<strong>${rec.fullname}</strong>`;
+            row.insertCell(2).innerText = rec.program || "N/A";
+            row.insertCell(3).innerText = rec.yearlevel || "N/A";
+            row.insertCell(4).innerText = rec.email;
+            row.insertCell(5).innerText = rec.contact || "N/A";
+            
+            let statusClass = "status-badge";
+            if(rec.status === "approved") statusClass += " status-approved";
+            else if(rec.status === "pending") statusClass += " status-pending";
+            else if(rec.status === "rejected") statusClass += " status-rejected";
+            row.insertCell(6).innerHTML = `<span class="${statusClass}">${rec.status.toUpperCase()}</span>`;
+            row.insertCell(7).innerHTML = new Date(rec.date).toLocaleDateString();
+            
+            const actionCell = row.insertCell(8);
+            actionCell.className = "action-buttons";
+            
+            if(rec.status === "pending") {
+                const approveBtn = document.createElement("button");
+                approveBtn.innerHTML = '<i class="fas fa-check"></i> Approve';
+                approveBtn.className = "action-btn approve-btn";
+                approveBtn.onclick = () => { updateStatus(rec.id, "approved"); renderAdminTable(); showAdminMsg(`✅ ${rec.fullname} approved!`); };
+                
+                const rejectBtn = document.createElement("button");
+                rejectBtn.innerHTML = '<i class="fas fa-times"></i> Reject';
+                rejectBtn.className = "action-btn reject-btn";
+                rejectBtn.onclick = () => { updateStatus(rec.id, "rejected"); renderAdminTable(); showAdminMsg(`❌ ${rec.fullname} rejected.`); };
+                
+                actionCell.appendChild(approveBtn);
+                actionCell.appendChild(rejectBtn);
+            } else {
+                const pendingBtn = document.createElement("button");
+                pendingBtn.innerHTML = '<i class="fas fa-clock"></i> Set Pending';
+                pendingBtn.className = "action-btn pending-btn";
+                pendingBtn.onclick = () => { updateStatus(rec.id, "pending"); renderAdminTable(); showAdminMsg(`⏳ ${rec.fullname} moved to pending.`); };
+                actionCell.appendChild(pendingBtn);
+            }
+        });
+    }
+    
+    function updateStudentNotifications(email) {
+        const notifDiv = document.getElementById("studentNotifications");
+        const studentRec = enrollments.find(e => e.email === email);
+        if(!studentRec) {
+            notifDiv.innerHTML = `<div class="notification-area"><i class="fas fa-info-circle"></i> No enrollment found. Fill out the form above to enroll.</div>`;
+            return;
+        }
+        let statusMessage = "";
+        if(studentRec.status === "pending") statusMessage = "📌 Your enrollment is pending review. The admin will verify documents shortly.";
+        else if(studentRec.status === "approved") statusMessage = "✅ CONGRATULATIONS! Your enrollment has been APPROVED. You are officially enrolled!";
+        else if(studentRec.status === "rejected") statusMessage = "❌ Your enrollment was rejected. Please contact admin for clarification.";
+        
+        notifDiv.innerHTML = `<div style="background:#eef2ff; border-radius:20px; padding:12px;">
+            <strong><i class="fas fa-user-check"></i> ${studentRec.fullname}</strong><br>
+            <span class="status-badge ${studentRec.status === 'approved' ? 'status-approved' : (studentRec.status === 'pending' ? 'status-pending' : 'status-rejected')}">Status: ${studentRec.status.toUpperCase()}</span>
+            <p style="margin-top:8px;">${statusMessage}</p>
+            <small>Last updated: ${new Date(studentRec.date).toLocaleString()}</small><br>
+            <small><i class="fas fa-book-open"></i> Program: ${studentRec.program}</small>
+        </div>`;
+    }
+    
+    function generateCSVReport() {
+        let csvRows = [["ID","Full Name","Email","Program","Year Level","Contact","Status","Submission Date"]];
+        for(const rec of enrollments) {
+            csvRows.push([rec.id, rec.fullname, rec.email, rec.program, rec.yearlevel, rec.contact, rec.status, new Date(rec.date).toLocaleString()]);
+        }
+        const blob = new Blob([csvRows.map(row => row.join(",")).join("\n")], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `enrollment_report_${Date.now()}.csv`;
+        link.click();
+        showAdminMsg("📊 Official report generated successfully!");
+    }
+    
+    function showAdminMsg(msg, isError = false) {
+        const msgDiv = document.getElementById("adminMsg");
+        msgDiv.innerHTML = `<div class="${isError ? 'alert-error' : 'alert'}">${msg}</div>`;
+        setTimeout(() => msgDiv.innerHTML = "", 3000);
+    }
+    
+    // Event Listeners
+    document.getElementById("loginFormElement").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const result = loginUser(document.getElementById("loginEmail").value.trim(), document.getElementById("loginPassword").value);
+        const msgDiv = document.getElementById("loginMessage");
+        if(result.success) {
+            msgDiv.innerHTML = `<div class="alert">Login successful! Redirecting...</div>`;
+            setTimeout(() => { if(result.role === "student") showStudentPortal(); else showAdminPortal(); }, 1000);
+        } else {
+            msgDiv.innerHTML = `<div class="alert alert-error">${result.message}</div>`;
+        }
+    });
+    
+    document.getElementById("registerFormElement").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const password = document.getElementById("regPassword").value;
+        const confirm = document.getElementById("regConfirmPassword").value;
+        if(password !== confirm) {
+            document.getElementById("registerMessage").innerHTML = `<div class="alert alert-error">Passwords do not match.</div>`;
+            return;
+        }
+        if(password.length < 8) {
+            document.getElementById("registerMessage").innerHTML = `<div class="alert alert-error">Password must be at least 8 characters.</div>`;
+            return;
+        }
+        const result = registerUser(document.getElementById("regFullname").value.trim(), document.getElementById("regEmail").value.trim(), password);
+        const msgDiv = document.getElementById("registerMessage");
+        if(result.success) {
+            msgDiv.innerHTML = `<div class="alert">${result.message} Please login.</div>`;
+            document.getElementById("registerFormElement").reset();
+            setTimeout(() => document.querySelector("[data-tab='login']").click(), 1500);
+        } else {
+            msgDiv.innerHTML = `<div class="alert alert-error">${result.message}</div>`;
+        }
+    });
+    
+    document.getElementById("enrollmentForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        if(!currentUser) return;
+        const result = submitEnrollment({
+            fullname: currentUser.fullname,
+            email: currentUser.email,
+            dob: document.getElementById("dob").value,
+            program: document.getElementById("program").value,
+            yearlevel: document.getElementById("yearlevel").value,
+            contact: document.getElementById("contact").value
+        });
+        const msgDiv = document.getElementById("studentMessage");
+        msgDiv.style.display = "block";
+        msgDiv.innerHTML = `<div class="alert">${result.message}</div>`;
+        updateStudentNotifications(currentUser.email);
+        setTimeout(() => msgDiv.style.display = "none", 4000);
+        if(document.getElementById("adminSection").style.display !== "none") renderAdminTable();
+    });
+    
+    document.getElementById("logoutBtn").addEventListener("click", () => logout());
+    document.getElementById("generateReportBtn")?.addEventListener("click", generateCSVReport);
+    document.getElementById("refreshAdminBtn")?.addEventListener("click", () => renderAdminTable());
+    document.getElementById("bulkApproveBtn")?.addEventListener("click", bulkApprovePending);
+    
+    document.getElementById("searchInput")?.addEventListener("input", (e) => {
+        searchTerm = e.target.value.toLowerCase();
+        renderAdminTable();
+    });
+    
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active-filter"));
+            btn.classList.add("active-filter");
+            currentFilter = btn.getAttribute("data-filter");
+            renderAdminTable();
+        });
+    });
+    
+    document.querySelectorAll(".auth-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            document.querySelectorAll(".auth-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+            const target = tab.getAttribute("data-tab");
+            document.getElementById("loginForm").classList.toggle("active-form", target === "login");
+            document.getElementById("registerForm").classList.toggle("active-form", target === "register");
+        });
+    });
+    
+    initDatabase();
+    if(!checkSession()) showAuthSection();
+</script>
+</body>
+</html>
